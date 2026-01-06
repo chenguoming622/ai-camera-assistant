@@ -19,7 +19,7 @@ source.include_exts = py,png,jpg,kv,atlas,json,tflite
 version = 1.0.0
 
 # 应用需求
-requirements = python3,kivy==2.2.1,kivymd,opencv-python,numpy,pillow,requests
+requirements = python3,kivy==2.3.0,kivymd==1.1.1,opencv-python-headless,numpy,pillow,requests,android
 
 # 支持的架构
 android.archs = arm64-v8a,armeabi-v7a
@@ -31,10 +31,9 @@ android.permissions = CAMERA,WRITE_EXTERNAL_STORAGE,READ_EXTERNAL_STORAGE,INTERN
 android.features = android.hardware.camera,android.hardware.camera.autofocus
 
 # Android API版本
-android.api = 33
+android.api = 31
 android.minapi = 21
 android.ndk = 25b
-android.sdk = 33
 
 # 启动模式
 android.entrypoint = org.kivy.android.PythonActivity
