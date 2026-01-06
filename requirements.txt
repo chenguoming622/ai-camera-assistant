@@ -1,5 +1,5 @@
 # Kivy框架 - Android应用开发
-kivy==2.3.0
+kivy==2.2.1
 kivymd==1.1.1
 
 # 图像处理
@@ -8,6 +8,3 @@ Pillow==10.1.0
 
 # 网络请求
 requests==2.31.0
-
-# 工具库
-python-dotenv==1.0.0

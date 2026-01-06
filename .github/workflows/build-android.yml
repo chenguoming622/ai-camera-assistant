@@ -3,24 +3,22 @@ name: Build Android APK
 on:
   push:
     branches: [ main, master ]
-  pull_request:
-    branches: [ main, master ]
-  workflow_dispatch:  # 允许手动触发
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
     
     steps:
-    - name: 检出代码
+    - name: Checkout
       uses: actions/checkout@v4
     
-    - name: 设置Python环境
+    - name: Setup Python
       uses: actions/setup-python@v5
       with:
         python-version: '3.9'
     
-    - name: 安装系统依赖
+    - name: Install dependencies
       run: |
         sudo apt-get update
         sudo apt-get install -y \
@@ -37,74 +35,35 @@ jobs:
           libavformat-dev \
           libavcodec-dev \
           zlib1g-dev \
-          libgstreamer1.0-0 \
-          gstreamer1.0-plugins-base \
-          gstreamer1.0-plugins-good \
           openjdk-11-jdk \
           unzip \
           autoconf \
-          libtool \
-          pkg-config
+          libtool
     
-    - name: 设置Java环境
+    - name: Setup Java
       run: |
-        export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
         echo "JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64" >> $GITHUB_ENV
-        echo "PATH=$JAVA_HOME/bin:$PATH" >> $GITHUB_ENV
     
-    - name: 安装Buildozer和依赖
+    - name: Install Buildozer
       run: |
         pip install --upgrade pip
-        pip install --upgrade buildozer
-        pip install --upgrade cython==0.29.36
-        pip install --upgrade virtualenv
+        pip install buildozer==1.5.0
+        pip install cython==0.29.36
     
-    - name: 缓存Buildozer目录
+    - name: Cache Buildozer
       uses: actions/cache@v4
       with:
-        path: |
-          .buildozer
-        key: buildozer-${{ runner.os }}-${{ hashFiles('buildozer.spec') }}
-        restore-keys: |
-          buildozer-${{ runner.os }}-
+        path: .buildozer
+        key: buildozer-${{ hashFiles('buildozer.spec') }}
     
-    - name: 初始化Buildozer
+    - name: Build APK
       run: |
-        buildozer init || echo "Already initialized"
+        yes | buildozer -v android debug || buildozer -v android debug
     
-    - name: 构建APK
-      run: |
-        yes | buildozer -v android debug
-      continue-on-error: false
-    
-    - name: 检查APK文件
-      run: |
-        ls -lh bin/ || echo "No bin directory"
-        find . -name "*.apk" -type f
-    
-    - name: 上传APK
-      if: success()
+    - name: Upload APK
       uses: actions/upload-artifact@v4
+      if: success()
       with:
-        name: android-apk
+        name: app-debug
         path: bin/*.apk
         retention-days: 30
-        if-no-files-found: error
-    
-    - name: 上传构建日志（如果失败）
-      if: failure()
-      uses: actions/upload-artifact@v4
-      with:
-        name: build-logs
-        path: |
-          .buildozer/logs/
-          .buildozer/android/platform/build-*/build.log
-        if-no-files-found: ignore
-    
-    - name: 创建Release（如果是tag）
-      if: startsWith(github.ref, 'refs/tags/')
-      uses: softprops/action-gh-release@v1
-      with:
-        files: bin/*.apk
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
