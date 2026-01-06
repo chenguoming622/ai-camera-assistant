@@ -19,7 +19,7 @@ source.include_exts = py,png,jpg,kv,atlas,json,tflite
 version = 1.0.0
 
 # 应用需求
-requirements = python3,kivy==2.3.0,kivymd==1.1.1,opencv-python-headless,numpy,pillow,requests,android
+requirements = python3,kivy==2.3.0,kivymd==1.1.1,pillow,numpy,requests,android,pyjnius
 
 # 支持的架构
 android.archs = arm64-v8a,armeabi-v7a

@@ -216,7 +216,7 @@ class CameraScreen(Screen):
     
     def save_photo(self, photo):
         """保存照片"""
-        import cv2
+        from PIL import Image
         from datetime import datetime
         
         try:
@@ -224,8 +224,9 @@ class CameraScreen(Screen):
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             filename = f"photo_{timestamp}.jpg"
             
-            # 保存
-            cv2.imwrite(filename, cv2.cvtColor(photo, cv2.COLOR_RGB2BGR))
+            # 转换为PIL Image并保存
+            img = Image.fromarray(photo)
+            img.save(filename)
             Logger.info(f"CameraScreen: 照片已保存: {filename}")
         except Exception as e:
             Logger.error(f"CameraScreen: 保存照片失败: {e}")

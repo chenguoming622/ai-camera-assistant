@@ -1,18 +1,13 @@
 # Kivy框架 - Android应用开发
-kivy==2.2.1
+kivy==2.3.0
 kivymd==1.1.1
 
 # 图像处理
-opencv-python-headless==4.8.1.78
 numpy==1.24.3
 Pillow==10.1.0
 
-# AI模型
-tensorflow-lite==2.14.0
-
 # 网络请求
 requests==2.31.0
-tencentcloud-sdk-python==3.0.1000
 
 # 工具库
 python-dotenv==1.0.0
