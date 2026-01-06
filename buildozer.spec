@@ -31,9 +31,10 @@ android.permissions = CAMERA,WRITE_EXTERNAL_STORAGE,READ_EXTERNAL_STORAGE,INTERN
 android.features = android.hardware.camera,android.hardware.camera.autofocus
 
 # Android API版本
-android.api = 31
+android.api = 33
 android.minapi = 21
 android.ndk = 25b
+android.sdk = 33
 
 # 启动模式
 android.entrypoint = org.kivy.android.PythonActivity

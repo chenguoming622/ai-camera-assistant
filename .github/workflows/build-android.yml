@@ -40,14 +40,43 @@ jobs:
           libgstreamer1.0 \
           gstreamer1.0-plugins-base \
           gstreamer1.0-plugins-good \
-          openjdk-11-jdk \
-          unzip
+          openjdk-17-jdk \
+          unzip \
+          autoconf \
+          libtool \
+          pkg-config \
+          libncurses5:i386 \
+          libstdc++6:i386 \
+          zlib1g:i386
+        
+        # 设置Java环境
+        export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+        echo "JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64" >> $GITHUB_ENV
     
     - name: 安装Buildozer
       run: |
         pip install --upgrade pip
         pip install buildozer
         pip install cython
+    
+    - name: 接受Android SDK许可证
+      run: |
+        # 创建SDK目录
+        mkdir -p $HOME/.android
+        
+        # 自动接受所有许可证
+        echo "y" | sdkmanager --licenses || true
+        echo "y" | sdkmanager --update || true
+        
+        # 安装必要的build-tools
+        sdkmanager "build-tools;34.0.0" || true
+        sdkmanager "platforms;android-33" || true
+        sdkmanager "platform-tools" || true
+    
+    - name: 设置Buildozer环境变量
+      run: |
+        echo "ANDROID_SDK_ROOT=$HOME/.buildozer/android/platform/android-sdk" >> $GITHUB_ENV
+        echo "ANDROID_HOME=$HOME/.buildozer/android/platform/android-sdk" >> $GITHUB_ENV
     
     - name: 缓存Buildozer目录
       uses: actions/cache@v4
@@ -58,7 +87,11 @@ jobs:
     
     - name: 构建APK
       run: |
-        buildozer android debug
+        # 接受buildozer的Android许可证
+        yes | buildozer android debug || buildozer android debug
+      env:
+        ANDROID_SDK_ROOT: ${{ env.ANDROID_HOME }}
+        ANDROID_HOME: ${{ env.ANDROID_HOME }}
     
     - name: 上传APK
       uses: actions/upload-artifact@v4
